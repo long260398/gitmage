@@ -26,6 +26,10 @@ export function printSuggestion(message: string): void {
   console.log(`  ${chalk.cyan('❯')} ${chalk.white.bold(message)}\n`);
 }
 
+export function printSuccess(message: string): void {
+  console.log(chalk.green('\n  ✔ Committed: ') + chalk.bold(message) + '\n');
+}
+
 export async function confirmMessage(suggested: string): Promise<string | null> {
   const rl = readline.createInterface({
     input: process.stdin,
