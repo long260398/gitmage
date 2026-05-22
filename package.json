@@ -1,0 +1,39 @@
+{
+  "name": "ai-commit",
+  "version": "0.1.0",
+  "description": "Generate conventional commit messages from staged changes using Claude AI",
+  "main": "dist/index.js",
+  "bin": {
+    "ai-commit": "./bin/ai-commit"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "claude",
+    "conventional-commits",
+    "cli",
+    "developer-tools",
+    "anthropic"
+  ],
+  "author": "kientiah",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.28.0",
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}
