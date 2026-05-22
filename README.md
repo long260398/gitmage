@@ -3,7 +3,7 @@
 > Generate conventional commit messages from staged changes using Claude AI.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/ai-commit.svg)](https://www.npmjs.com/package/ai-commit)
+[![npm version](https://img.shields.io/npm/v/@long260398/ai-commit.svg)](https://www.npmjs.com/package/@long260398/ai-commit)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
 
 ## Demo
@@ -41,17 +41,30 @@ $ ai-commit
 - Node.js 18+
 - Anthropic API key — [get one here](https://console.anthropic.com)
 
+> Uses Claude Haiku — costs ~$0.0001 per commit. $5 credit lasts ~50,000 commits.
+
 ### Install
 
 ```bash
-npm install -g ai-commit
+npm install -g @long260398/ai-commit
+```
+
+Or try without installing:
+
+```bash
+npx @long260398/ai-commit --dry-run
 ```
 
 Set your API key:
 
 ```bash
+# Mac / Linux
 export ANTHROPIC_API_KEY=sk-ant-your-key-here
-# Add to ~/.bashrc or ~/.zshrc to persist across sessions
+# Add to ~/.bashrc or ~/.zshrc to persist
+
+# Windows PowerShell
+$env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
+# Add to $PROFILE to persist
 ```
 
 ## Usage
@@ -67,6 +80,12 @@ Preview without committing:
 
 ```bash
 ai-commit --dry-run
+```
+
+Check version:
+
+```bash
+ai-commit --version
 ```
 
 ## Stack

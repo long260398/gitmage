@@ -4,13 +4,15 @@ import { generateMessage } from './ai';
 import { getApiKey } from './config';
 import { printHeader, startSpinner, printSuggestion, confirmMessage } from './ui';
 
+import { version } from '../package.json';
+
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run') || args.includes('-d');
 const isVersion = args.includes('--version') || args.includes('-v');
 
 async function main(): Promise<void> {
   if (isVersion) {
-    console.log('0.1.0');
+    console.log(version);
     process.exit(0);
   }
 
