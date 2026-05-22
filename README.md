@@ -1,18 +1,18 @@
-# commitgenie
+# gitmage
 
 > Generate conventional commit messages from staged changes using AI — free with Groq, or higher quality with Claude.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/commitgenie.svg)](https://www.npmjs.com/package/commitgenie)
+[![npm version](https://img.shields.io/npm/v/gitmage.svg)](https://www.npmjs.com/package/gitmage)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
 
 ## Demo
 
 ```bash
 $ git add src/auth.ts
-$ commitgenie
+$ gitmage
 
-  commitgenie  ·  AI-powered git commits
+  gitmage  ·  AI-powered git commits
 
   ⠙ Generating commit message...
 
@@ -28,10 +28,10 @@ $ commitgenie
 
 ## Features
 
-- **Zero configuration** — set your API key once, run `commitgenie` anywhere
+- **Zero configuration** — set your API key once, run `gitmage` anywhere
 - **Always conventional** — follows `feat/fix/docs/chore` format automatically
 - **Edit before commit** — review and change the message before it lands
-- **Dry run mode** — preview without committing: `commitgenie --dry-run`
+- **Dry run mode** — preview without committing: `gitmage --dry-run`
 - **Works with any stack** — language and framework agnostic
 
 ## Getting Started
@@ -44,13 +44,13 @@ $ commitgenie
 ### Install
 
 ```bash
-npm install -g commitgenie
+npm install -g gitmage
 ```
 
 Or try without installing:
 
 ```bash
-npx commitgenie --dry-run
+npx gitmage --dry-run
 ```
 
 ### Set your API key
@@ -83,19 +83,19 @@ Stage your changes, then run:
 
 ```bash
 git add .
-commitgenie
+gitmage
 ```
 
 Preview without committing:
 
 ```bash
-commitgenie --dry-run
+gitmage --dry-run
 ```
 
 Check version:
 
 ```bash
-commitgenie --version
+gitmage --version
 ```
 
 ## Stack

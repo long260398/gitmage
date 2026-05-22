@@ -1,10 +1,10 @@
 {
-  "name": "commitgenie",
+  "name": "gitmage",
   "version": "0.1.0",
   "description": "Generate conventional commit messages from staged changes using AI",
   "main": "dist/index.js",
   "bin": {
-    "commitgenie": "bin/ai-commit"
+    "gitmage": "bin/ai-commit"
   },
   "files": [
     "dist/",
