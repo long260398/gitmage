@@ -1,10 +1,10 @@
 {
-  "name": "@long260398/aicommit",
+  "name": "commitgenie",
   "version": "0.1.0",
-  "description": "Generate conventional commit messages from staged changes using Claude AI",
+  "description": "Generate conventional commit messages from staged changes using AI",
   "main": "dist/index.js",
   "bin": {
-    "aicommit": "bin/ai-commit"
+    "commitgenie": "bin/ai-commit"
   },
   "files": [
     "dist/",

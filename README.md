@@ -1,18 +1,18 @@
-# ai-commit
+# commitgenie
 
 > Generate conventional commit messages from staged changes using AI — free with Groq, or higher quality with Claude.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/@long260398/aicommit.svg)](https://www.npmjs.com/package/@long260398/aicommit)
+[![npm version](https://img.shields.io/npm/v/commitgenie.svg)](https://www.npmjs.com/package/commitgenie)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
 
 ## Demo
 
 ```bash
 $ git add src/auth.ts
-$ ai-commit
+$ commitgenie
 
-  ai-commit  ·  AI-powered git commits
+  commitgenie  ·  AI-powered git commits
 
   ⠙ Generating commit message...
 
@@ -28,10 +28,10 @@ $ ai-commit
 
 ## Features
 
-- **Zero configuration** — set your API key once, run `ai-commit` anywhere
+- **Zero configuration** — set your API key once, run `commitgenie` anywhere
 - **Always conventional** — follows `feat/fix/docs/chore` format automatically
 - **Edit before commit** — review and change the message before it lands
-- **Dry run mode** — preview without committing: `ai-commit --dry-run`
+- **Dry run mode** — preview without committing: `commitgenie --dry-run`
 - **Works with any stack** — language and framework agnostic
 
 ## Getting Started
@@ -44,13 +44,13 @@ $ ai-commit
 ### Install
 
 ```bash
-npm install -g @long260398/aicommit
+npm install -g commitgenie
 ```
 
 Or try without installing:
 
 ```bash
-npx @long260398/aicommit --dry-run
+npx commitgenie --dry-run
 ```
 
 ### Set your API key
@@ -83,19 +83,19 @@ Stage your changes, then run:
 
 ```bash
 git add .
-ai-commit
+commitgenie
 ```
 
 Preview without committing:
 
 ```bash
-ai-commit --dry-run
+commitgenie --dry-run
 ```
 
 Check version:
 
 ```bash
-ai-commit --version
+commitgenie --version
 ```
 
 ## Stack
