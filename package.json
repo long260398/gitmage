@@ -4,8 +4,14 @@
   "description": "Generate conventional commit messages from staged changes using Claude AI",
   "main": "dist/index.js",
   "bin": {
-    "ai-commit": "./bin/ai-commit"
+    "aicommit": "./bin/ai-commit"
   },
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
