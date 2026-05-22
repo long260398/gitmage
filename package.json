@@ -22,7 +22,7 @@
     "developer-tools",
     "anthropic"
   ],
-  "author": "kientiah",
+  "author": "long260398",
   "license": "MIT",
   "engines": {
     "node": ">=18"

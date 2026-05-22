@@ -86,4 +86,4 @@ Pull requests are welcome. For major changes, open an issue first.
 
 ## Support
 
-If this saves you time on every commit, consider [sponsoring on GitHub](https://github.com/sponsors/kientiah).
+If this saves you time on every commit, consider [sponsoring on GitHub](https://github.com/sponsors/long260398).
