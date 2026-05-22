@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.28.0",
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "groq-sdk": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

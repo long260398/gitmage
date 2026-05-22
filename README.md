@@ -1,6 +1,6 @@
 # ai-commit
 
-> Generate conventional commit messages from staged changes using Claude AI.
+> Generate conventional commit messages from staged changes using AI — free with Groq, or higher quality with Claude.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@long260398/ai-commit.svg)](https://www.npmjs.com/package/@long260398/ai-commit)
@@ -39,9 +39,7 @@ $ ai-commit
 ### Prerequisites
 
 - Node.js 18+
-- Anthropic API key — [get one here](https://console.anthropic.com)
-
-> Uses Claude Haiku — costs ~$0.0001 per commit. $5 credit lasts ~50,000 commits.
+- An API key — **Groq is free**, Claude is paid but higher quality
 
 ### Install
 
@@ -55,17 +53,29 @@ Or try without installing:
 npx @long260398/ai-commit --dry-run
 ```
 
-Set your API key:
+### Set your API key
+
+**Option 1 — Groq (free):** [console.groq.com](https://console.groq.com)
+
+```bash
+# Mac / Linux
+export GROQ_API_KEY=gsk_your-key-here
+
+# Windows PowerShell
+$env:GROQ_API_KEY="gsk_your-key-here"
+```
+
+**Option 2 — Claude (higher quality):** [console.anthropic.com](https://console.anthropic.com) — ~$0.0001/commit
 
 ```bash
 # Mac / Linux
 export ANTHROPIC_API_KEY=sk-ant-your-key-here
-# Add to ~/.bashrc or ~/.zshrc to persist
 
 # Windows PowerShell
 $env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
-# Add to $PROFILE to persist
 ```
+
+The tool auto-detects which key is set. Set one and run.
 
 ## Usage
 
@@ -92,7 +102,7 @@ ai-commit --version
 
 - **Runtime**: Node.js 18+
 - **Language**: TypeScript
-- **AI**: Claude Haiku via Anthropic SDK
+- **AI**: Groq (Llama 3.3, free) or Claude Haiku (paid)
 - **Format**: Conventional Commits
 
 ## Contributing

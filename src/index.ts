@@ -1,10 +1,9 @@
 import chalk from 'chalk';
+import { version } from '../package.json';
 import { isGitRepo, getStagedDiff, runCommit } from './git';
 import { generateMessage } from './ai';
-import { getApiKey } from './config';
+import { getConfig } from './config';
 import { printHeader, startSpinner, printSuggestion, confirmMessage } from './ui';
-
-import { version } from '../package.json';
 
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run') || args.includes('-d');
@@ -35,13 +34,13 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const apiKey = getApiKey();
+  const config = getConfig();
 
-  const stopSpinner = startSpinner('Generating commit message...');
+  const stopSpinner = startSpinner(`Generating via ${config.provider}...`);
   let message: string;
 
   try {
-    message = await generateMessage(diff, apiKey);
+    message = await generateMessage(diff, config);
   } catch (err) {
     stopSpinner();
     const text = err instanceof Error ? err.message : String(err);
