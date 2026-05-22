@@ -3,7 +3,7 @@
 > Generate conventional commit messages from staged changes using AI — free with Groq, or higher quality with Claude.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/@long260398/ai-commit.svg)](https://www.npmjs.com/package/@long260398/ai-commit)
+[![npm version](https://img.shields.io/npm/v/aicommit.svg)](https://www.npmjs.com/package/aicommit)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
 
 ## Demo
@@ -44,13 +44,13 @@ $ ai-commit
 ### Install
 
 ```bash
-npm install -g @long260398/ai-commit
+npm install -g aicommit
 ```
 
 Or try without installing:
 
 ```bash
-npx @long260398/ai-commit --dry-run
+npx aicommit --dry-run
 ```
 
 ### Set your API key

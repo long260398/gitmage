@@ -1,5 +1,5 @@
 {
-  "name": "@long260398/ai-commit",
+  "name": "aicommit",
   "version": "0.1.0",
   "description": "Generate conventional commit messages from staged changes using Claude AI",
   "main": "dist/index.js",
