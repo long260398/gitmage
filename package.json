@@ -1,6 +1,6 @@
 {
   "name": "gitmage",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate conventional commit messages from staged changes using AI",
   "main": "dist/index.js",
   "bin": {

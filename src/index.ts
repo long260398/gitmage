@@ -8,6 +8,8 @@ import { printHeader, startSpinner, printSuggestion, confirmMessage } from './ui
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run') || args.includes('-d');
 const isVersion = args.includes('--version') || args.includes('-v');
+const prefixArg = args.find((a) => a.startsWith('--prefix='));
+const prefix = prefixArg ? prefixArg.slice('--prefix='.length).trim() : null;
 
 async function main(): Promise<void> {
   if (isVersion) {
@@ -49,6 +51,11 @@ async function main(): Promise<void> {
   }
 
   stopSpinner();
+
+  if (prefix) {
+    message = `${prefix} ${message}`;
+  }
+
   printSuggestion(message);
 
   if (isDryRun) {
