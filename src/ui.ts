@@ -1,56 +1,112 @@
 import chalk from 'chalk';
-import * as readline from 'readline';
 
 export function printHeader(): void {
-  console.log(chalk.bold.cyan('\n  ai-commit') + chalk.dim('  ·  AI-powered git commits\n'));
+  console.log(chalk.bold.cyan('\n  gitmage') + chalk.dim('  ·  AI-powered git commits\n'));
 }
 
 export function startSpinner(text: string): () => void {
   const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
   let i = 0;
-
   const interval = setInterval(() => {
     process.stdout.write(`\r  ${chalk.cyan(frames[i])} ${chalk.dim(text)}`);
     i = (i + 1) % frames.length;
   }, 80);
-
-  // Returns a stop function — caller decides when to stop the spinner
   return () => {
     clearInterval(interval);
-    process.stdout.write('\r\x1b[K'); // erase the spinner line
+    process.stdout.write('\r\x1b[K');
   };
 }
 
-export function printSuggestion(message: string): void {
-  console.log(`  ${chalk.green('✔')} ${chalk.bold('Suggested commit message:')}\n`);
-  console.log(`  ${chalk.cyan('❯')} ${chalk.white.bold(message)}\n`);
-}
+export type SelectResult =
+  | { type: 'selected'; message: string }
+  | { type: 'regenerate' }
+  | { type: 'cancelled' };
 
-export function printSuccess(message: string): void {
-  console.log(chalk.green('\n  ✔ Committed: ') + chalk.bold(message) + '\n');
-}
+export async function selectCommitMessage(messages: string[]): Promise<SelectResult> {
+  type Option = { label: string; value: string };
 
-export async function confirmMessage(suggested: string): Promise<string | null> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  const msgOpts: Option[] = messages.map((m) => ({ label: m, value: m }));
+  const actionOpts: Option[] = [
+    { label: chalk.dim('↻  Regenerate'), value: '__regenerate__' },
+    { label: chalk.dim('✕  Cancel'), value: '__cancel__' },
+  ];
+  const options = [...msgOpts, ...actionOpts];
+  let selected = 0;
+
+  // Header printed once — not part of the re-rendered block
+  console.log(`  ${chalk.green('✔')} ${chalk.bold('Suggested messages:')}\n`);
+
+  // renderBlock draws exactly RENDERED_LINES lines
+  // options.length lines + 1 separator blank + 1 footer blank + 1 hint = options.length + 3
+  const RENDERED_LINES = options.length + 3;
+
+  const renderBlock = () => {
+    for (let i = 0; i < options.length; i++) {
+      if (i === msgOpts.length) process.stdout.write('\n'); // separator before actions
+      const isChosen = i === selected;
+      const prefix = isChosen ? chalk.cyan('  ❯ ') : '    ';
+      const label =
+        isChosen && i < msgOpts.length ? chalk.white.bold(options[i].label) : options[i].label;
+      process.stdout.write(`${prefix}${label}\n`);
+    }
+    process.stdout.write(chalk.dim('\n  ↑↓ to move  Enter to select\n'));
+  };
+
+  renderBlock();
+
+  // Non-TTY fallback: auto-select first message
+  if (!process.stdin.isTTY) {
+    return { type: 'selected', message: messages[0] };
+  }
+
+  const clearAndRender = () => {
+    // Move up RENDERED_LINES and clear to end of screen
+    process.stdout.write(`\x1b[${RENDERED_LINES}A\x1b[J`);
+    renderBlock();
+  };
 
   return new Promise((resolve) => {
-    rl.question(
-      chalk.dim('  Press Enter to confirm, or type to edit (Ctrl+C to cancel):\n  > '),
-      (input) => {
-        rl.close();
-        const trimmed = input.trim();
-        // Empty input = user accepted the suggestion as-is
-        resolve(trimmed === '' ? suggested : trimmed);
-      }
-    );
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding('utf-8');
 
-    rl.on('SIGINT', () => {
-      rl.close();
-      process.stdout.write('\n');
-      resolve(null);
-    });
+    const cleanup = () => {
+      process.stdin.removeListener('data', onData);
+      process.stdin.setRawMode(false);
+      process.stdin.pause();
+    };
+
+    const onData = (key: string) => {
+      if (key === '') {
+        // Ctrl+C
+        cleanup();
+        process.stdout.write('\n');
+        resolve({ type: 'cancelled' });
+        return;
+      }
+
+      if (key === '\r' || key === '\n') {
+        // Enter
+        cleanup();
+        process.stdout.write('\n');
+        const val = options[selected].value;
+        if (val === '__regenerate__') resolve({ type: 'regenerate' });
+        else if (val === '__cancel__') resolve({ type: 'cancelled' });
+        else resolve({ type: 'selected', message: val });
+        return;
+      }
+
+      if (key === '\x1b[A') {
+        // Up arrow
+        selected = (selected - 1 + options.length) % options.length;
+        clearAndRender();
+      } else if (key === '\x1b[B') {
+        // Down arrow
+        selected = (selected + 1) % options.length;
+        clearAndRender();
+      }
+    };
+
+    process.stdin.on('data', onData);
   });
 }

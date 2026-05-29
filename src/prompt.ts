@@ -1,17 +1,30 @@
-export const SYSTEM_PROMPT = `You are an expert at writing git commit messages following the Conventional Commits specification.
+const LANG_NAMES: Record<string, string> = {
+  ja: 'Japanese',
+  vi: 'Vietnamese',
+  zh: 'Chinese',
+  ko: 'Korean',
+  es: 'Spanish',
+  fr: 'French',
+  de: 'German',
+  pt: 'Portuguese',
+};
 
-Given a git diff, generate exactly one commit message that:
-- Follows the format: <type>(<optional scope>): <short description>
-- Uses one of these types: feat, fix, docs, style, refactor, chore, test, perf, ci, build
-- Description uses imperative mood ("add" not "added"), lowercase, no trailing period
-- Is under 72 characters total
-- Scope is optional — derive it from the primary file or module changed
+export function buildSystemPrompt(language: string): string {
+  const langNote =
+    language !== 'en' && LANG_NAMES[language]
+      ? `\n- Write the short description in ${LANG_NAMES[language]} (type and scope must stay in English)`
+      : '';
 
-Examples:
-- feat(auth): add JWT refresh token rotation
-- fix(api): handle null response from user service
-- docs: add installation steps to README
-- chore: upgrade eslint to v9
-- refactor(db): extract query builder into separate module
+  return `You are an expert at writing git commit messages following the Conventional Commits specification.
 
-Output ONLY the commit message. No explanation. No markdown. No quotes. No newlines.`;
+Given a git diff, generate exactly 3 commit message options that vary in phrasing and focus.
+
+Rules:
+- Format: <type>(<optional scope>): <short description>
+- Types: feat, fix, docs, style, refactor, chore, test, perf, ci, build
+- Imperative mood ("add" not "added"), lowercase after colon, no trailing period
+- Under 72 characters total
+- Each option must be meaningfully different from the others${langNote}
+
+Output ONLY 3 lines, one commit message per line. No numbers, no bullets, no explanations, no markdown.`;
+}

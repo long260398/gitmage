@@ -11,18 +11,16 @@ export function isGitRepo(): boolean {
 
 export function getStagedDiff(): string {
   const result = spawnSync('git', ['diff', '--staged'], { encoding: 'utf-8' });
-
-  if (result.error) {
-    throw new Error('git not found. Please install git and try again.');
-  }
-
+  if (result.error) throw new Error('git not found. Please install git and try again.');
   return result.stdout;
 }
 
 export function runCommit(message: string): void {
   const result = spawnSync('git', ['commit', '-m', message], { stdio: 'inherit' });
+  if (result.status !== 0) throw new Error('git commit failed');
+}
 
-  if (result.status !== 0) {
-    throw new Error('git commit failed');
-  }
+export function runPush(): void {
+  const result = spawnSync('git', ['push'], { stdio: 'inherit' });
+  if (result.status !== 0) throw new Error('git push failed');
 }

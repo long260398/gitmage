@@ -1,6 +1,6 @@
 {
   "name": "gitmage",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Generate conventional commit messages from staged changes using AI",
   "main": "dist/index.js",
   "bin": {
@@ -23,10 +23,14 @@
     "commit",
     "ai",
     "claude",
+    "groq",
+    "llama",
     "conventional-commits",
     "cli",
     "developer-tools",
-    "anthropic"
+    "anthropic",
+    "multilingual",
+    "automation"
   ],
   "author": "long260398",
   "license": "MIT",

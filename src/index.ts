@@ -1,18 +1,29 @@
 import chalk from 'chalk';
 import { version } from '../package.json';
-import { isGitRepo, getStagedDiff, runCommit } from './git';
-import { generateMessage } from './ai';
+import { isGitRepo, getStagedDiff, runCommit, runPush } from './git';
+import { generateMessages } from './ai';
 import { getConfig } from './config';
-import { printHeader, startSpinner, printSuggestion, confirmMessage } from './ui';
+import { printHeader, startSpinner, selectCommitMessage } from './ui';
 
 const args = process.argv.slice(2);
-const isDryRun = args.includes('--dry-run') || args.includes('-d');
-const isVersion = args.includes('--version') || args.includes('-v');
+
+const flags = {
+  dryRun: args.includes('--dry-run') || args.includes('-d'),
+  version: args.includes('--version') || args.includes('-v'),
+  push: args.includes('--push'),
+};
+
+const providerArg = args.find((a) => a.startsWith('--provider='));
+const providerOverride = providerArg ? providerArg.slice('--provider='.length) : undefined;
+
+const langArg = args.find((a) => a.startsWith('--lang='));
+const langOverride = langArg ? langArg.slice('--lang='.length) : undefined;
+
 const prefixArg = args.find((a) => a.startsWith('--prefix='));
 const prefix = prefixArg ? prefixArg.slice('--prefix='.length).trim() : null;
 
 async function main(): Promise<void> {
-  if (isVersion) {
+  if (flags.version) {
     console.log(version);
     process.exit(0);
   }
@@ -29,54 +40,81 @@ async function main(): Promise<void> {
   if (!diff.trim()) {
     console.log(
       chalk.yellow('  Nothing staged.') +
-      chalk.dim(' Run ') +
-      chalk.white('git add <files>') +
-      chalk.dim(' first.\n')
+        chalk.dim(' Run ') +
+        chalk.white('git add <files>') +
+        chalk.dim(' first.\n'),
     );
     process.exit(0);
   }
 
-  const config = getConfig();
+  const config = getConfig(providerOverride, langOverride);
 
-  const stopSpinner = startSpinner(`Generating via ${config.provider}...`);
-  let message: string;
+  // Regenerate loop — user can request new suggestions without re-running
+  while (true) {
+    const stopSpinner = startSpinner(`Generating via ${config.provider}...`);
+    let messages: string[];
 
-  try {
-    message = await generateMessage(diff, config);
-  } catch (err) {
+    try {
+      messages = await generateMessages(diff, config);
+    } catch (err) {
+      stopSpinner();
+      console.error(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
+      process.exit(1);
+    }
+
     stopSpinner();
-    const text = err instanceof Error ? err.message : String(err);
-    console.error(chalk.red(`\n  Error: ${text}\n`));
-    process.exit(1);
-  }
 
-  stopSpinner();
+    if (prefix) {
+      messages = messages.map((m) => `${prefix} ${m}`);
+    }
 
-  if (prefix) {
-    message = `${prefix} ${message}`;
-  }
+    if (flags.dryRun) {
+      console.log(`  ${chalk.green('✔')} ${chalk.bold('Suggested messages:')}\n`);
+      messages.forEach((m, i) => console.log(`  ${chalk.dim(`${i + 1}.`)} ${m}`));
+      console.log(chalk.dim('\n  Dry run — no commit created.\n'));
+      process.exit(0);
+    }
 
-  printSuggestion(message);
+    const result = await selectCommitMessage(messages);
 
-  if (isDryRun) {
-    console.log(chalk.dim('  Dry run — no commit created.\n'));
-    process.exit(0);
-  }
+    if (result.type === 'cancelled') {
+      console.log(chalk.dim('  Cancelled.\n'));
+      process.exit(0);
+    }
 
-  const confirmed = await confirmMessage(message);
+    if (result.type === 'regenerate') {
+      console.log(chalk.dim('  Regenerating...\n'));
+      continue;
+    }
 
-  if (confirmed === null) {
-    console.log(chalk.dim('\n  Cancelled.\n'));
-    process.exit(0);
-  }
+    try {
+      runCommit(result.message);
+      console.log(chalk.green('  ✔ Committed: ') + chalk.bold(result.message));
 
-  try {
-    runCommit(confirmed);
-    console.log(chalk.green('\n  ✔ Committed: ') + chalk.bold(confirmed) + '\n');
-  } catch (err) {
-    const text = err instanceof Error ? err.message : String(err);
-    console.error(chalk.red(`\n  Commit failed: ${text}\n`));
-    process.exit(1);
+      if (flags.push) {
+        const stopPush = startSpinner('Pushing...');
+        try {
+          runPush();
+          stopPush();
+          console.log(chalk.green('  ✔ Pushed.\n'));
+        } catch (err) {
+          stopPush();
+          console.error(
+            chalk.red(`\n  Push failed: ${err instanceof Error ? err.message : String(err)}\n`),
+          );
+          process.exit(1);
+        }
+      } else {
+        console.log('');
+      }
+
+      break;
+    } catch (err) {
+      console.error(
+        chalk.red(`\n  Commit failed: ${err instanceof Error ? err.message : String(err)}\n`),
+      );
+      process.exit(1);
+    }
   }
 }
 

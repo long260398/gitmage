@@ -1,59 +1,67 @@
 import Anthropic from '@anthropic-ai/sdk';
 import Groq from 'groq-sdk';
-import { SYSTEM_PROMPT } from './prompt';
+import { buildSystemPrompt } from './prompt';
 import { Config } from './config';
 
 const MAX_DIFF_CHARS = 8000;
 
-export async function generateMessage(diff: string, config: Config): Promise<string> {
+export async function generateMessages(diff: string, config: Config): Promise<string[]> {
   const truncated =
     diff.length > MAX_DIFF_CHARS
       ? diff.slice(0, MAX_DIFF_CHARS) + '\n\n[diff truncated]'
       : diff;
 
-  const userMessage = `Generate a commit message for this diff:\n\n${truncated}`;
+  const userMessage = `Generate 3 commit message options for this diff:\n\n${truncated}`;
+  const systemPrompt = buildSystemPrompt(config.language);
 
-  if (config.provider === 'groq') {
-    return generateWithGroq(userMessage, config.apiKey);
-  }
+  const raw =
+    config.provider === 'groq'
+      ? await callGroq(userMessage, systemPrompt, config.apiKey)
+      : await callClaude(userMessage, systemPrompt, config.apiKey);
 
-  return generateWithClaude(userMessage, config.apiKey);
+  const messages = raw
+    .split('\n')
+    .map((line) => line.replace(/^\d+[\.\)\-\s]+/, '').trim())
+    .filter((line) => line.length > 5)
+    .slice(0, 3);
+
+  if (messages.length === 0) throw new Error('AI returned no valid commit messages');
+
+  return messages;
 }
 
-async function generateWithGroq(userMessage: string, apiKey: string): Promise<string> {
+async function callGroq(
+  userMessage: string,
+  system: string,
+  apiKey: string,
+): Promise<string> {
   const client = new Groq({ apiKey });
-
-  const response = await client.chat.completions.create({
+  const res = await client.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
-    max_tokens: 100,
+    max_tokens: 250,
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: system },
       { role: 'user', content: userMessage },
     ],
   });
-
-  const text = response.choices[0]?.message?.content;
-  if (!text) {
-    throw new Error('Empty response from Groq API');
-  }
-
+  const text = res.choices[0]?.message?.content;
+  if (!text) throw new Error('Empty response from Groq API');
   return text.trim();
 }
 
-async function generateWithClaude(userMessage: string, apiKey: string): Promise<string> {
+async function callClaude(
+  userMessage: string,
+  system: string,
+  apiKey: string,
+): Promise<string> {
   const client = new Anthropic({ apiKey });
-
-  const response = await client.messages.create({
+  const res = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 100,
-    system: SYSTEM_PROMPT,
+    max_tokens: 250,
+    system,
     messages: [{ role: 'user', content: userMessage }],
   });
-
-  const block = response.content[0];
-  if (block.type !== 'text') {
-    throw new Error('Unexpected response type from Claude API');
-  }
-
+  const block = res.content[0];
+  if (block.type !== 'text') throw new Error('Unexpected response type from Claude API');
   return block.text.trim();
 }
