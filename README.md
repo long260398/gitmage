@@ -9,25 +9,7 @@
 
 ## Demo
 
-```
-$ git add src/auth.ts
-$ gitmage
-
-  gitmage  ·  AI-powered git commits
-
-  ✔ Suggested messages:
-
-  ❯ feat(auth): add JWT token validation middleware
-    feat: implement token validation for auth module
-    feat(auth): validate incoming JWT tokens on request
-
-    ↻  Regenerate
-    ✕  Cancel
-
-  ↑↓ to move  Enter to select
-
-  ✔ Committed: feat(auth): add JWT token validation middleware
-```
+![Demo](./demo.gif)
 
 ## Features
 
